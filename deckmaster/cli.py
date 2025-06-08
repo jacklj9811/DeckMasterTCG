@@ -6,6 +6,7 @@ from pathlib import Path
 
 from .card import Card
 from .deck import Deck
+from .generator import generate_deck
 
 
 def load_deck(path: Path) -> Deck:
@@ -34,6 +35,10 @@ def main(argv: list[str] | None = None) -> int:
     remove = subparsers.add_parser("remove", help="Remove a card by name")
     remove.add_argument("name")
 
+    generate = subparsers.add_parser("generate", help="Generate deck from rulebook and library")
+    generate.add_argument("rulebook", type=Path)
+    generate.add_argument("library", type=Path)
+
     subparsers.add_parser("show", help="Display deck contents")
 
     args = parser.parse_args(argv)
@@ -46,6 +51,10 @@ def main(argv: list[str] | None = None) -> int:
         deck.remove_card(args.name)
         save_deck(deck, args.deck_file)
     elif args.command == "show":
+        print(deck)
+    elif args.command == "generate":
+        deck = generate_deck(args.rulebook, args.library)
+        save_deck(deck, args.deck_file)
         print(deck)
     return 0
 
